@@ -25,6 +25,15 @@
     color: white;
     font-weight:bold;
 }
+#mainWindow #leftBar
+{
+    position: absolute;
+    top:80px;
+    left: 0;
+    width: 300px;
+    bottom: 0;
+    border: 1px solid blue;
+}
 #topBar .counterDiv
 {
     height: 100%;
@@ -71,4 +80,76 @@
     top: calc(50% - 95px);
     left: calc(50% - 57px);
     font-size: 29.5px;
+}
+.generatorDiv
+{
+    position: relative;
+    height: 150px;
+    box-sizing: border-box;
+    border: 1px solid blue;
+    padding: 10px;
+}
+.generatorDiv .upperHalf
+{
+    position: relative;
+    height: 60px;
+    width: 100%;
+}
+.generatorDiv .lowerHalf
+{
+    position: relative;
+    height: 70px;
+    width: 100%;
+}
+.generatorDiv .upperHalf .titleAndLevel
+{
+    height: 30px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+}
+.generatorDiv .upperHalf .titleAndLevel .title
+{
+    display: inline-block;
+    width: 70%;
+    height: 100%;
+}
+.generatorDiv .upperHalf .titleAndLevel .level
+{
+    display: inline-block;
+    width: 30%;
+    height: 100%;
+}
+.generatorDiv .upperHalf .progressBar
+{
+    position: relative;
+    border: 2px solid black;
+    border-radius: 4px;
+    height: 30px;
+    font-size: 18px;
+}
+.generatorDiv .upperHalf .progressBar .background
+{
+    width: 100%;
+    height: 100%;
+    background-color: lightblue;
+    border-radius: 4px;
+}
+.generatorDiv .upperHalf .progressBar .label
+{
+    position: absolute;
+    left:0;
+    right:0;
+    top: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+.generatorDiv .upperHalf .progressBar .bar
+{
+    position: absolute;
+    left:0;
+    right:100%;
+    top: 0;
+    bottom: 0;
+    background-color: #00bd00;
 }
