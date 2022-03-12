@@ -3,7 +3,6 @@ $(document).ready(function()
 {
     game1 = new game();
     game1.start();
-    console.log(game1);
 });
 var holdClick;
 class game {
@@ -12,17 +11,20 @@ class game {
     upgrades;
     holdClicksPerSecond;
     generators;
+    runTimer;
+    tps; //ticks per seonds
     constructor()
     {
-        this.money = 1000;
+        this.money = 0;
         this.clickStrength = 1;
         this.holdClicksPerSecond = 10;
         this.upgrades = {
             "hasHoldClick": true
         };
         this.generators = {
-            "baker" : new Generator(this, "Baker", 10, 1, 9000, 1.05, 9000, 10, 27)
+            "baker" : new Generator(this, "baker", "Baker", 10, 1, 10, 1.05, 10, 10, 27)
         };
+        this.tps = 25;
     }
     gainClickMoney()
     {
@@ -32,7 +34,7 @@ class game {
     start()
     {
         this.buildUI();
-        console.log("game started");
+        this.run();
     }
     buildUI()
     {
@@ -41,6 +43,30 @@ class game {
         topbar.append(getCounterDiv("money", "Geld:", this.money));
         this.buildGenerators(this.generators);
         this.addGameEventListeners();
+    }
+    runHelper()
+    {
+        this.money += this.generatorsProduce();
+        $("#money > div.value").text(parseInt(this.money));
+    }
+    run()
+    {
+        var self = this;
+        self.runTimer = setInterval(function() {
+            self.money += self.generatorsProduce();
+            $("#money > div.value").text(parseInt(self.money));
+        },1000/self.tps);
+    }
+
+    generatorsProduce()
+    {
+        var timePassed = 1000/this.tps;
+        var moneyProduced = 0;
+        $.each(this.generators, function(key, value)
+        {
+            moneyProduced += value.produce(timePassed);
+        });
+        return moneyProduced;
     }
     /**
      * Appends a div for each generator
@@ -60,7 +86,6 @@ class game {
             $(this).attr("style", "width:180px;height:108px;top:calc(50% - 90px);left:calc(50% - 54px);font-size:28.5px");
             if (game1.upgrades.hasHoldClick)
             {
-                console.log("hold");
                 game1.gainClickMoney();
                 holdClick = setInterval(game1.gainClickMoney, (1000/game1.holdClicksPerSecond));
             }
@@ -120,6 +145,28 @@ function getUpperGeneratorDiv(generator)
     return upperPart;
 }
 /**
+ * Get lower Half of Generator div
+ * @param {Generator} generator 
+ * @returns {object} jQuery object of upper half of generator div 
+ */
+function getLowerGeneratorDiv(generator)
+{
+    var lowerPart = getJQDiv("", "lowerHalf");
+    var moneyDiv = getJQDiv("", "money");
+    var label = getJQDiv("", "label");
+    var value = getJQDiv("", "value");
+    var upgradeButtonsDiv = generator.getUpgradeButtonsDiv();
+
+    label.text("Money: ");
+    value.text(generator.getRevenueLabel());
+    moneyDiv.append(label);
+    moneyDiv.append(value);
+
+    lowerPart.append(moneyDiv);
+    lowerPart.append(upgradeButtonsDiv);
+    return lowerPart;
+}
+/**
  * Get progressbar of worker
  * @param {Generator} generator 
  */
@@ -143,8 +190,7 @@ function getProgressBar(generator)
 function updateProgressBarLabel(generator)
 {
     var timePassed = generator.currentProgress / 100 * generator.productionTime;
-    var timeLeft = generator.productionTime - (timePassed);
-    console.log(generator.productionTime);
+    var timeLeft = generator.productionTime - timePassed;
     if (timeLeft < 60)
         return parseInt(timeLeft).toString() + " s";
     else
@@ -165,6 +211,7 @@ function updateProgressBarLabel(generator)
  */
 class Generator
 {
+    id;
     name;
     baseRevenue;
     owned;
@@ -176,6 +223,7 @@ class Generator
     /**
      * Create a Worker
      * @param {game} game object of instance game
+     * @param {string} id id of benerator (also of html div)
      * @param {string} name name of Generator
      * @param {number} baseRevenue base revenue without multiplier
      * @param {number} owned number of owned Generator
@@ -185,9 +233,10 @@ class Generator
      * @param {number} baseCost base cost for first level of Generator
      * @param {number} currentProgress current progress in percent
      */
-    constructor(game, name, baseRevenue, owned, baseProductionTime, costfactor, productionTime, baseCost, currentProgress)
+    constructor(game, id, name, baseRevenue, owned, baseProductionTime, costfactor, productionTime, baseCost, currentProgress)
     {
         this.name = name;
+        this.id = id;
         this.baseRevenue = baseRevenue;
         this.owned = owned;
         this.baseProductionTime = baseProductionTime;
@@ -199,12 +248,27 @@ class Generator
         this.currentProgress = currentProgress;
     }
     /**
-     * Get Revenue of Generator
-     * @returns {number} money gained in one cycle
+     * Produce Money
+     * @param {number} time that has gone into production
+     * @returns {number} produced money
      */
-    getRevenue()
+    produce(timePassed)
     {
-        return this.baseRevenue;
+        if (this.owned == 0)
+        {
+            return 0;
+        }
+        this.currentProgress += timePassed / 10 / this.productionTime;
+        var producedMoney = 0;
+        while (this.currentProgress > 100) {
+            producedMoney += this.baseRevenue * this.owned;
+            this.currentProgress -= 100;
+        }
+        var progressbarBar = $("#"+this.id+" .upperHalf .progressBar .bar");
+        var progressbarLabel = $("#"+this.id+" .upperHalf .progressBar .label");
+        progressbarBar.css("right", (100 - this.currentProgress)+"%");
+        progressbarLabel.text(updateProgressBarLabel(this));
+        return producedMoney;
     }
     /**
      * Check if you can buy certain amount of Generators
@@ -226,7 +290,25 @@ class Generator
     {
         return this.baseCost * (((Math.pow(this.costfactor, this.owned)) - (Math.pow(this.costfactor, (this.owned + quantity)))) / (1 - this.costfactor));
     }
-    
+    /**
+     * 
+     * @returns {string} revenue for display in generator div
+     */
+    getRevenueLabel()
+    {
+        let revenue = this.baseRevenue * this.owned;
+        let str = "+";
+        str += revenue;
+        str += " (" + (revenue / this.productionTime) + "/s)";
+        return str;
+    }
+    getUpgradeButtonsDiv()
+    {
+        let wrapperDiv = getJQDiv("", "upgradeBtnWrapper");
+        let one = getJQDiv("", "one");
+        let ten = getJQDiv("", "ten");
+        let hundred = getJQDiv("", "hundred");
+    }
 }
 /**
  * Get jQuery object of a div
