@@ -33,6 +33,7 @@
     width: 300px;
     bottom: 0;
     border: 1px solid blue;
+    overflow: scroll;
 }
 #topBar .counterDiv
 {
@@ -200,7 +201,8 @@
 .generatorDiv .lowerHalf .upgradeBtnWrapper .button .upgradePrice
 {
     height: 10px;
-    font-size: 0.85em;
+    font-size: 0.8em;
+    color: gold;
 }
 
 .btn-grad 

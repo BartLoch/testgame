@@ -15,7 +15,7 @@ class game {
     tps; //ticks per seonds
     constructor()
     {
-        this.money = 0;
+        this.money = 10000;
         this.clickStrength = 1;
         this.holdClicksPerSecond = 10;
         this.upgrades = {
@@ -24,15 +24,18 @@ class game {
         this.generators = {
             "news" : new Generator(this, "news", "Newsstand", 1, 1, 0.6, 1.07, 0.6, 4, 0),
             "shoe": new Generator(this, "shoe", "Shoe Seller", 60, 0, 3, 1.15, 3, 60, 0),
-            "car": new Generator(this, "car", "Car House", 540, 0, 6, 1.14, 6, 720, 0),
-            "landlord": new Generator(this, "land", "Landlord", 4320, 0, 12, 1.13, 12, 8640, 0)
+            "mower": new Generator(this, "mower", "Lawn Mower Seller", 540, 0, 6, 1.14, 6, 720, 0),
+            "car": new Generator(this, "car", "Car Seller", 4320, 0, 12, 1.13, 12, 8640, 0),
+            "landlord": new Generator(this, "landlord", "Landlord", 51840, 0, 24, 1.12,24,103680,0),
+            "estate" : new Generator(this, "estate", "Estate Seller", 622080, 0, 96, 1.11, 96, 1244160,0),
+            "bank": new Generator(this, "bank", "Bank", 7464960,0,384, 1.1,384,14929920,0)
         };
         this.tps = 25;
     }
     gainClickMoney()
     {
         game1.money += game1.clickStrength;
-        $("#topBar .counterDiv#money .value").text(game1.money);
+        $("#topBar .counterDiv#money .value").text(moneyFormat(game1.money));
     }
     start()
     {
@@ -49,7 +52,7 @@ class game {
     }
     updateUI()
     {
-        $("#money > div.value").text(parseInt(this.money));
+        $("#money > div.value").text(moneyFormat(this.money));
         $.each(this.generators, function(key, value)
         {
             value.updateGenratorDiv();
@@ -58,7 +61,7 @@ class game {
     runHelper()
     {
         this.money += this.generatorsProduce();
-        $("#money > div.value").text(parseInt(this.money));
+        $("#money > div.value").text(moneyFormat(this.money));
     }
     run()
     {
@@ -185,7 +188,7 @@ function getUpgradeButton(generator, steps)
 
     button.attr("data-steps", steps);
     upperHalf.text("+"+steps);
-    lowerHalf.text(generator.getBuildCost(steps)+"G");
+    lowerHalf.text(moneyFormat(generator.getBuildCost(steps)));
     button.append(upperHalf);
     button.append(lowerHalf);
     var revenue = generator.baseRevenue * (generator.owned+steps);
@@ -338,8 +341,8 @@ class Generator
     {
         let revenue = this.baseRevenue * this.owned;
         let str = "+";
-        str += revenue;
-        str += " (" + (revenue / this.productionTime) + "/s)";
+        str += moneyFormat(revenue);
+        str += " (" + moneyFormat(revenue / this.productionTime, 2) + "/s)";
         return str;
     } 
     updateGenratorDiv()
@@ -384,4 +387,38 @@ function getJQDiv(id, classes = "", style = "", data = {})
         }
     }
     return div;
+}
+function moneyFormat(money, nachkommastellen = 0)
+{
+    var letter = 0;
+    while (money > 1000)
+    {
+        letter += 1;
+        money /= 1000;
+    }
+    money = Intl.NumberFormat("de-DE", {style:"decimal", maximumFractionDigits: 3, minimumFractionDigits: 0}).format(money);
+    var returnString = money.toString();
+    returnString += " ";
+    switch (letter)
+    {
+        case 1:
+            returnString += "K";
+            break;
+        case 2:
+            returnString += "M";
+            break;
+        case 3:
+            returnString += "B";
+            break;
+        case 4:
+            returnString += "T";
+            break;
+        case 5: 
+            returnString += "Qu";
+            break;
+        case 5: 
+            returnString += "Qi";
+            break;
+    }
+    return returnString;
 }
