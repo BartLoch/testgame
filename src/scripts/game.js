@@ -91,7 +91,7 @@ class game {
             self.updateUI();
         },1000/self.tps);
         self.saveTimer = setInterval(function() {
-            this.save();
+            self.save();
         }, 60000);
     }
     save()
