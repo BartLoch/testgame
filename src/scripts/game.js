@@ -12,6 +12,7 @@ class game {
     holdClicksPerSecond;
     generators;
     runTimer;
+    saveTimer;
     tps; //ticks per seonds
     constructor()
     {
@@ -30,7 +31,25 @@ class game {
             "estate" : new Generator(this, "estate", "Estate Seller", 622080, 0, 96, 1.11, 96, 1244160,0),
             "bank": new Generator(this, "bank", "Bank", 7464960,0,384, 1.1,384,14929920,0)
         };
+        if (localStorage.hasOwnProperty("save"))
+        {
+            var save = JSON.parse(localStorage.save);
+            this.generators = this.loadGeneratorSave(save.generators);
+            this.money = save.money;
+        }
         this.tps = 25;
+    }
+    loadGeneratorSave(generators)
+    {
+        return {
+            "news" : new Generator(this, "news", "Newsstand", 1, generators["news"].owned, 0.6, 1.07, 0.6, 4, 0),
+            "shoe": new Generator(this, "shoe", "Shoe Seller", 60, generators["shoe"].owned, 3, 1.15, 3, 60, 0),
+            "mower": new Generator(this, "mower", "Lawn Mower Seller", 540, generators["mower"].owned, 6, 1.14, 6, 720, 0),
+            "car": new Generator(this, "car", "Car Seller", 4320, generators["car"].owned, 12, 1.13, 12, 8640, 0),
+            "landlord": new Generator(this, "landlord", "Landlord", 51840, generators["landlord"].owned, 24, 1.12,24,103680,0),
+            "estate" : new Generator(this, "estate", "Estate Seller", 622080, generators["estate"].owned, 96, 1.11, 96, 1244160,0),
+            "bank": new Generator(this, "bank", "Bank", 7464960,generators["bank"].owned,384, 1.1,384,14929920,0)
+        };
     }
     gainClickMoney()
     {
@@ -44,6 +63,7 @@ class game {
     }
     buildUI()
     {
+        console.log(this.generators);
         var topbar = $("#topBar");
         var leftBar = $("#leftBar");
         topbar.append(getCounterDiv("money", "Geld:", this.money));
@@ -70,8 +90,18 @@ class game {
             self.money += self.generatorsProduce();
             self.updateUI();
         },1000/self.tps);
+        self.saveTimer = setInterval(function() {
+            this.save();
+        }, 60000);
     }
-
+    save()
+    {
+        let save = {
+            money: this.money,
+            generators: this.generators
+        };
+        localStorage.save = JSON.stringify(save);
+    }
     generatorsProduce()
     {
         var timePassed = 1000/this.tps;
