@@ -101,6 +101,7 @@ class game {
             generators: this.generators
         };
         localStorage.save = JSON.stringify(save);
+        showToast("Saved automatically");
     }
     generatorsProduce()
     {
@@ -147,6 +148,17 @@ class game {
             }
         });
     }
+}
+function showToast(message)
+{
+    var toast = getJQDiv("toast", "toastmessage", "display:none;", {});
+    toast.text(message);
+    $("body").append(toast);
+    $("#toast").fadeToggle();
+    setTimeout(function(){
+        $("#toast").fadeToggle(function() {$(this).remove()});
+    }, 5000);
+
 }
 function getCounterDiv(id, label, value)
 {
