@@ -358,12 +358,17 @@ class Generator
             this.owned += quantity;
             game1.updateUI();
             this.updateUpgradeButtons();
+            this.updateLevelLabel();
     }
     updateUpgradeButtons()
     {        
         var lowerPart = getLowerGeneratorDiv(this);
         $("#"+this.id+" .lowerHalf").remove();
         $("#"+this.id).append(lowerPart);
+    }
+    updateLevelLabel()
+    {
+        $("#"+this.id+" .upperHalf .titleAndLevel .level").text("Lvl "+this.owned);
     }
 }
 /**
