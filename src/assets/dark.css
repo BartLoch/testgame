@@ -1,0 +1,19 @@
+body
+{
+    background-color: black;
+    color: white;
+}
+#topBar, #leftBar, .generatorDiv, .stepsLabel, .upgradePrice, .upgradeBtnWrapper .button, .toastmessage, #settingsWindow, #settingsBtn
+{
+    color: white !important;
+    border-color: white !important;
+    background-color: black !important;
+}
+.toastmessage
+{
+    border: 1px solid white;
+}
+#topBar #settingsBtn
+{
+    background-image: url(settings.png);
+}

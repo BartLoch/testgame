@@ -1,6 +1,5 @@
 var game1;
-$(document).ready(function()
-{
+$(document).ready(function () {
     game1 = new game();
     game1.start();
 });
@@ -15,8 +14,7 @@ class game {
     saveTimer;
     tps; //ticks per seonds
     version;
-    constructor()
-    {
+    constructor() {
         this.money = 10000;
         this.clickStrength = 1;
         this.holdClicksPerSecond = 10;
@@ -24,16 +22,15 @@ class game {
             "hasHoldClick": true
         };
         this.generators = {
-            0 : new Generator(this, "news", "Newsstand", 1, 1, 0.6, 1.07, 0.6, 4, 0),
+            0: new Generator(this, "news", "Newsstand", 1, 1, 0.6, 1.07, 0.6, 4, 0),
             1: new Generator(this, "shoe", "Shoe Seller", 60, 0, 3, 1.15, 3, 60, 0),
             2: new Generator(this, "mower", "Lawn Mower Seller", 540, 0, 6, 1.14, 6, 720, 0),
             3: new Generator(this, "car", "Car Seller", 4320, 0, 12, 1.13, 12, 8640, 0),
-            4: new Generator(this, "landlord", "Landlord", 51840, 0, 24, 1.12,24,103680,0),
-            5 : new Generator(this, "estate", "Estate Seller", 622080, 0, 96, 1.11, 96, 1244160,0),
-            6: new Generator(this, "bank", "Bank", 7464960,0,384, 1.1,384,14929920,0)
+            4: new Generator(this, "landlord", "Landlord", 51840, 0, 24, 1.12, 24, 103680, 0),
+            5: new Generator(this, "estate", "Estate Seller", 622080, 0, 96, 1.11, 96, 1244160, 0),
+            6: new Generator(this, "bank", "Bank", 7464960, 0, 384, 1.1, 384, 14929920, 0)
         };
-        if (localStorage.hasOwnProperty("save"))
-        {
+        if (localStorage.hasOwnProperty("save")) {
             var save = JSON.parse(localStorage.save);
             this.generators = this.loadGeneratorSave(save.generators);
             this.money = save.money;
@@ -44,66 +41,90 @@ class game {
         }
         this.tps = 25;
         this.fillVersion();
+        if (this.settings.darkmode)
+            this.enableDarkmode();
     }
-    fillVersion()
-    {
+    fillVersion() {
         var self = this;
-        jQuery.get('version.txt', function(data) {
+        jQuery.get('version.txt', function (data) {
             self.version = data;
-        });        
+        });
     }
-    initiateSettings()
-    {
+    initiateSettings() {
         var settings = {};
         settings.darkmode = false;
         return settings;
     }
-    addSettingsView()
-    {
+    addSettingsView() {
         var settings = this.settings;
         var settingsBtn = getJQDiv("settingsBtn");
         $("#topBar").append(settingsBtn);
+        var settingsView = getJQDiv("settingsWindow");
+        var darkmodeSettingsRow = getSettingsRow("nightModeSetting", "Nightmode", getCheckbox("darkmodeSwitch", settings.darkmode));
+        settingsView.append(darkmodeSettingsRow);
+        $("#mainWindow").append(settingsView);
+        settingsBtn.click(function () {
+            $("#settingsWindow").toggle();
+        });
+        this.loadSettingsListener();
     }
-    loadGeneratorSave(generators)
-    {
-        if (generators.hasOwnProperty("news"))
-        {
+    loadSettingsListener() {
+        var self = this;
+        $("#darkmodeSwitch").on("change", function () {
+            if ($(this).prop("checked") == true) {
+                self.enableDarkmode();
+                self.saveSetting("darkmode", true);
+            }
+            else {
+                self.disableDarkmode();
+                self.saveSetting("darkmode", false);
+            }
+        })
+    }
+    enableDarkmode() {
+        $("head").append('<link id="darkCss" rel="stylesheet" href="assets/dark.css">');
+    }
+    disableDarkmode() {
+        $("#darkCss").remove();
+    }
+    saveSetting(settingname, value) {
+        this.settings[settingname] = value;
+        this.save(false);
+    }
+    loadGeneratorSave(generators) {
+        if (generators.hasOwnProperty("news")) {
             return {
-                0 : new Generator(this, "news", "Newsstand", 1, generators["news"].owned, 0.6, 1.07, 0.6, 4, 0),
+                0: new Generator(this, "news", "Newsstand", 1, generators["news"].owned, 0.6, 1.07, 0.6, 4, 0),
                 1: new Generator(this, "shoe", "Shoe Seller", 60, generators["shoe"].owned, 3, 1.15, 3, 60, 0),
                 2: new Generator(this, "mower", "Lawn Mower Seller", 540, generators["mower"].owned, 6, 1.14, 6, 720, 0),
                 3: new Generator(this, "car", "Car Seller", 4320, generators["car"].owned, 12, 1.13, 12, 8640, 0),
-                4: new Generator(this, "landlord", "Landlord", 51840, generators["landlord"].owned, 24, 1.12,24,103680,0),
-                5 : new Generator(this, "estate", "Estate Seller", 622080, generators["estate"].owned, 96, 1.11, 96, 1244160,0),
-                6: new Generator(this, "bank", "Bank", 7464960,generators["bank"].owned,384, 1.1,384,14929920,0)
+                4: new Generator(this, "landlord", "Landlord", 51840, generators["landlord"].owned, 24, 1.12, 24, 103680, 0),
+                5: new Generator(this, "estate", "Estate Seller", 622080, generators["estate"].owned, 96, 1.11, 96, 1244160, 0),
+                6: new Generator(this, "bank", "Bank", 7464960, generators["bank"].owned, 384, 1.1, 384, 14929920, 0)
             };
         }
-        else
-        {
+        else {
             return {
-                0 : new Generator(this, "news", "Newsstand", 1, generators[0].owned, 0.6, 1.07, 0.6, 4, 0),
+                0: new Generator(this, "news", "Newsstand", 1, generators[0].owned, 0.6, 1.07, 0.6, 4, 0),
                 1: new Generator(this, "shoe", "Shoe Seller", 60, generators[1].owned, 3, 1.15, 3, 60, 0),
                 2: new Generator(this, "mower", "Lawn Mower Seller", 540, generators[2].owned, 6, 1.14, 6, 720, 0),
                 3: new Generator(this, "car", "Car Seller", 4320, generators[3].owned, 12, 1.13, 12, 8640, 0),
-                4: new Generator(this, "landlord", "Landlord", 51840, generators[4].owned, 24, 1.12,24,103680,0),
-                5 : new Generator(this, "estate", "Estate Seller", 622080, generators[5].owned, 96, 1.11, 96, 1244160,0),
-                6: new Generator(this, "bank", "Bank", 7464960,generators[6].owned,384, 1.1,384,14929920,0)
+                4: new Generator(this, "landlord", "Landlord", 51840, generators[4].owned, 24, 1.12, 24, 103680, 0),
+                5: new Generator(this, "estate", "Estate Seller", 622080, generators[5].owned, 96, 1.11, 96, 1244160, 0),
+                6: new Generator(this, "bank", "Bank", 7464960, generators[6].owned, 384, 1.1, 384, 14929920, 0)
             };
         }
-        
+
     }
-    gainClickMoney()
-    {
+    gainClickMoney() {
         game1.money += game1.clickStrength;
         $("#topBar .counterDiv#money .value").text(moneyFormat(game1.money));
     }
-    start()
-    {
+    start() {
         this.buildUI();
         this.run();
     }
-    buildUI()
-    {
+    buildUI() {
         console.log(this.generators);
         var topbar = $("#topBar");
         var leftBar = $("#leftBar");
@@ -112,55 +133,49 @@ class game {
         this.addGameEventListeners();
         this.addSettingsView();
     }
-    updateUI()
-    {
+    updateUI() {
         $("#money > div.value").text(moneyFormat(this.money));
-        $.each(this.generators, function(key, value)
-        {
+        $.each(this.generators, function (key, value) {
             value.updateGenratorDiv();
         });
     }
-    runHelper()
-    {
+    runHelper() {
         this.money += this.generatorsProduce();
         $("#money > div.value").text(moneyFormat(this.money));
     }
-    run()
-    {
+    run() {
         var self = this;
-        self.runTimer = setInterval(function() {
+        self.runTimer = setInterval(function () {
             self.money += self.generatorsProduce();
             self.updateUI();
-        },1000/self.tps);
-        self.saveTimer = setInterval(function() {
+        }, 1000 / self.tps);
+        self.saveTimer = setInterval(function () {
             self.save();
         }, 60000);
     }
-    save()
-    {
+    save(automatically = true) {
         let save = {
             money: this.money,
-            generators: this.generators
+            generators: this.generators,
+            settings: this.settings
         };
         localStorage.save = JSON.stringify(save);
-        showToast("Saved automatically");
+        if (automatically)
+            showToast("Saved automatically");
         this.checkVersion();
     }
-    checkVersion()
-    {
+    checkVersion() {
         var self = this;
         var now = new Date();
-        $.get("https://bartloch.github.io/testgame/src/version.txt?nocache="+now.getTime(), function(response){
+        $.get("https://bartloch.github.io/testgame/src/version.txt?nocache=" + now.getTime(), function (response) {
             if (self.version < response)
                 showToast("A new version is out, please refresh the page, to get the latest bugfixes and features.");
         });
     }
-    generatorsProduce()
-    {
-        var timePassed = 1000/this.tps;
+    generatorsProduce() {
+        var timePassed = 1000 / this.tps;
         var moneyProduced = 0;
-        $.each(this.generators, function(key, value)
-        {
+        $.each(this.generators, function (key, value) {
             moneyProduced += value.produce(timePassed);
         });
         return moneyProduced;
@@ -169,58 +184,71 @@ class game {
      * Appends a div for each generator
      * @param {Generator[]} generators 
      */
-    buildGenerators(generators)
-    {
+    buildGenerators(generators) {
         var leftBar = $("#leftBar");
         for (var key in generators) {
             var hidden = false;
-            if (key > 0 && (generators[key-1].owned == 0))
+            if (key > 0 && (generators[key - 1].owned == 0))
                 hidden = true;
             leftBar.append(getGeneratorDiv(key, generators[key], hidden));
         }
     }
-    addGameEventListeners()
-    {
-       $("#clickButton").on("mousedown", function()
-        {
+    addGameEventListeners() {
+        $("#clickButton").on("mousedown", function () {
             $(this).attr("style", "width:180px;height:108px;top:calc(50% - 90px);left:calc(50% - 54px);font-size:28.5px");
-            if (game1.upgrades.hasHoldClick)
-            {
+            if (game1.upgrades.hasHoldClick) {
                 game1.gainClickMoney();
-                holdClick = setInterval(game1.gainClickMoney, (1000/game1.holdClicksPerSecond));
+                holdClick = setInterval(game1.gainClickMoney, (1000 / game1.holdClicksPerSecond));
             }
         });
-        $("#clickButton").on("mouseup", function()
-        {
+        $("#clickButton").on("mouseup", function () {
             $(this).removeAttr("style");
-            if (!game1.upgrades.hasHoldClick)
-            {
+            if (!game1.upgrades.hasHoldClick) {
                 game1.gainClickMoney();
             }
-            else
-            {
+            else {
                 clearInterval(holdClick);
             }
         });
     }
 }
-function showToast(message)
-{
+function getCheckbox(id, checked) {
+    var checkbox = $('<input type="checkbox" id="' + id + '" name="' + id + '" />');
+    if (checked)
+        checkbox.prop('checked', true);
+    return checkbox;
+}
+/**
+ * 
+ * @param {string} id 
+ * @param {string} label 
+ * @param {string|jQuery} rightHtml 
+ * @returns {jQuery}
+ */
+function getSettingsRow(id, label, rightHtml) {
+    var settingsRow = getJQDiv(id, "settingsRow");
+    var leftLabel = getJQDiv("", "label");
+    leftLabel.text(label);
+    var content = getJQDiv("", "content");
+    content.html(rightHtml);
+    settingsRow.append(leftLabel);
+    settingsRow.append(content);
+    return settingsRow;
+}
+function showToast(message) {
     var toast = getJQDiv("toast", "toastmessage", "display:none;", {});
     toast.text(message);
     $("body").append(toast);
     $("#toast").fadeToggle();
-    setTimeout(function(){
-        $("#toast").fadeToggle(function() {$(this).remove()});
+    setTimeout(function () {
+        $("#toast").fadeToggle(function () { $(this).remove() });
     }, 5000);
 
 }
-function getCounterDiv(id, label, value)
-{
-    return $('<div id="'+id+'" class="counterDiv"><div class="label">'+label+'</div><div class="value">'+value+'</div></div>');
+function getCounterDiv(id, label, value) {
+    return $('<div id="' + id + '" class="counterDiv"><div class="label">' + label + '</div><div class="value">' + value + '</div></div>');
 }
-function getGeneratorIndexById(id)
-{
+function getGeneratorIndexById(id) {
     var result = -1;
     switch (id) {
         case "news":
@@ -243,10 +271,10 @@ function getGeneratorIndexById(id)
             break;
         case "bank":
             return 6;
-            break;  
+            break;
         default:
             return -1;
-        break;
+            break;
     }
 }
 /**
@@ -255,8 +283,7 @@ function getGeneratorIndexById(id)
  * @param {Generator} generator Generator object
  * @returns {object} jQuery object of Generator
  */
-function getGeneratorDiv(id, generator, hidden)
-{
+function getGeneratorDiv(id, generator, hidden) {
     var generatorD = getJQDiv(generator.id, "generatorDiv");
     var upperPart = getUpperGeneratorDiv(generator);
     var lowerPart = getLowerGeneratorDiv(generator);
@@ -271,16 +298,15 @@ function getGeneratorDiv(id, generator, hidden)
  * @param {Generator} generator 
  * @returns {object} jQuery object of upper half of generator div 
  */
-function getUpperGeneratorDiv(generator)
-{
+function getUpperGeneratorDiv(generator) {
     var upperPart = getJQDiv("", "upperHalf");
     var titleAndLvl = getJQDiv("", "titleAndLevel");
     var title = getJQDiv("", "title");
     var lvl = getJQDiv("", "level");
     var progressBar = getProgressBar(generator);
-    
+
     title.text(generator.name);
-    lvl.text("Lvl "+generator.owned);
+    lvl.text("Lvl " + generator.owned);
     titleAndLvl.append(title);
     titleAndLvl.append(lvl);
     upperPart.append(titleAndLvl);
@@ -292,8 +318,7 @@ function getUpperGeneratorDiv(generator)
  * @param {Generator} generator 
  * @returns {object} jQuery object of upper half of generator div 
  */
-function getLowerGeneratorDiv(generator)
-{
+function getLowerGeneratorDiv(generator) {
     var lowerPart = getJQDiv("", "lowerHalf");
     var moneyDiv = getJQDiv("", "money");
     var label = getJQDiv("", "label");
@@ -309,30 +334,26 @@ function getLowerGeneratorDiv(generator)
     lowerPart.append(upgradeButtonsDiv);
     return lowerPart;
 }
-function getUpgradeButton(generator, steps)
-{
+function getUpgradeButton(generator, steps) {
     var button = getJQDiv("", "button");
     var upperHalf = getJQDiv("", "stepsLabel");
     var lowerHalf = getJQDiv("", "upgradePrice");
 
     button.attr("data-steps", steps);
-    upperHalf.text("+"+steps);
+    upperHalf.text("+" + steps);
     lowerHalf.text(moneyFormat(generator.getBuildCost(steps)));
     button.append(upperHalf);
     button.append(lowerHalf);
-    var revenue = generator.baseRevenue * (generator.owned+steps);
+    var revenue = generator.baseRevenue * (generator.owned + steps);
     var self = generator;
-    button.click(function () 
-    {
-        if (self.canBeBuilt(steps))
-        {
-           self.build(steps);
+    button.click(function () {
+        if (self.canBeBuilt(steps)) {
+            self.build(steps);
         }
     });
     return button;
 }
-function getUpgradeButtonsDiv(generator)
-{
+function getUpgradeButtonsDiv(generator) {
     let wrapperDiv = getJQDiv("", "upgradeBtnWrapper");
     let one = getUpgradeButton(generator, 1);
     let ten = getUpgradeButton(generator, 10);
@@ -346,13 +367,12 @@ function getUpgradeButtonsDiv(generator)
  * Get progressbar of worker
  * @param {Generator} generator 
  */
-function getProgressBar(generator)
-{
-    var progressbar = getJQDiv("", "progressBar", "", {time: generator.productionTime});
+function getProgressBar(generator) {
+    var progressbar = getJQDiv("", "progressBar", "", { time: generator.productionTime });
     var barBG = getJQDiv("", "background");
     var progressbarBar = getJQDiv("", "bar");
     var progressbarLabel = getJQDiv("", "label");
-    progressbarBar.css("right", (100 - generator.currentProgress)+"%");
+    progressbarBar.css("right", (100 - generator.currentProgress) + "%");
     progressbarLabel.text(updateProgressBarLabel(generator));
     progressbar.append(barBG);
     progressbar.append(progressbarBar);
@@ -363,18 +383,15 @@ function getProgressBar(generator)
  * 
  * @param {Generator} generator 
  */
-function updateProgressBarLabel(generator)
-{
+function updateProgressBarLabel(generator) {
     var timePassed = generator.currentProgress / 100 * generator.productionTime;
     var timeLeft = generator.productionTime - timePassed;
     if (timeLeft < 60)
         return parseInt(timeLeft).toString() + " s";
-    else
-    {
+    else {
         if (timeLeft < 3600)
             return parseInt(timeLeft / 60) + " m " + parseInt(timeLeft % 60) + " s";
-        else
-        {
+        else {
             let hours = parseInt(timeLeft / 3600);
             let minutes = parseInt((timeLeft % 3600) / 60);
             let seconds = parseInt((timeLeft % 3600) % 60);
@@ -385,8 +402,7 @@ function updateProgressBarLabel(generator)
 /**
  * Class representing a Woker/Money Generator
  */
-class Generator
-{
+class Generator {
     id;
     name;
     baseRevenue;
@@ -409,8 +425,7 @@ class Generator
      * @param {number} baseCost base cost for first level of Generator
      * @param {number} currentProgress current progress in percent
      */
-    constructor(game, id, name, baseRevenue, owned, baseProductionTime, costfactor, productionTime, baseCost, currentProgress)
-    {
+    constructor(game, id, name, baseRevenue, owned, baseProductionTime, costfactor, productionTime, baseCost, currentProgress) {
         this.name = name;
         this.id = id;
         this.baseRevenue = baseRevenue;
@@ -428,10 +443,8 @@ class Generator
      * @param {number} time that has gone into production
      * @returns {number} produced money
      */
-    produce(timePassed)
-    {
-        if (this.owned == 0)
-        {
+    produce(timePassed) {
+        if (this.owned == 0) {
             return 0;
         }
         this.currentProgress += timePassed / 10 / this.productionTime;
@@ -447,8 +460,7 @@ class Generator
      * @param {number} quantity count of Generators intended to buy
      * @returns {boolean} if Generators can be bought
      */
-    canBeBuilt(quantity)
-    {
+    canBeBuilt(quantity) {
         if (this.getBuildCost(quantity) <= game1.money)
             return true;
         return false;
@@ -458,55 +470,47 @@ class Generator
      * @param {number} quantity count of Generators intended to buy
      * @returns {number} building cost of Generators
      */
-    getBuildCost(quantity)
-    {
+    getBuildCost(quantity) {
         return Math.floor(this.baseCost * (((Math.pow(this.costfactor, this.owned)) - (Math.pow(this.costfactor, (this.owned + quantity)))) / (1 - this.costfactor)));
     }
     /**
      * 
      * @returns {string} revenue for display in generator div
      */
-    getRevenueLabel()
-    {
+    getRevenueLabel() {
         let revenue = this.baseRevenue * this.owned;
         let str = "+";
         str += moneyFormat(revenue);
         str += " (" + moneyFormat(revenue / this.productionTime, 2) + "/s)";
         return str;
-    } 
-    updateGenratorDiv()
-    {
-        var progressbarBar = $("#"+this.id+" .upperHalf .progressBar .bar");
-        var progressbarLabel = $("#"+this.id+" .upperHalf .progressBar .label");
-        progressbarBar.css("right", (100 - this.currentProgress)+"%");
+    }
+    updateGenratorDiv() {
+        var progressbarBar = $("#" + this.id + " .upperHalf .progressBar .bar");
+        var progressbarLabel = $("#" + this.id + " .upperHalf .progressBar .label");
+        progressbarBar.css("right", (100 - this.currentProgress) + "%");
         progressbarLabel.text(updateProgressBarLabel(this));
     }
-    build(quantity)
-    {
+    build(quantity) {
         game1.money -= this.getBuildCost(quantity);
-            this.owned += quantity;
-            game1.updateUI();
-            this.updateUpgradeButtons();
-            this.updateLevelLabel();
-        if (this.owned > 0 && (this.owned - quantity >= 0))
-        {
+        this.owned += quantity;
+        game1.updateUI();
+        this.updateUpgradeButtons();
+        this.updateLevelLabel();
+        if (this.owned > 0 && (this.owned - quantity >= 0)) {
             let nextIndex = getGeneratorIndexById(this.id) + 1;
-            if (game1.generators.hasOwnProperty(nextIndex))
-            {
-                $("#"+game1.generators[nextIndex].id).show();
+            if (game1.generators.hasOwnProperty(nextIndex)) {
+                $("#" + game1.generators[nextIndex].id).show();
             }
         }
-            
+
     }
-    updateUpgradeButtons()
-    {        
+    updateUpgradeButtons() {
         var lowerPart = getLowerGeneratorDiv(this);
-        $("#"+this.id+" .lowerHalf").remove();
-        $("#"+this.id).append(lowerPart);
+        $("#" + this.id + " .lowerHalf").remove();
+        $("#" + this.id).append(lowerPart);
     }
-    updateLevelLabel()
-    {
-        $("#"+this.id+" .upperHalf .titleAndLevel .level").text("Lvl "+this.owned);
+    updateLevelLabel() {
+        $("#" + this.id + " .upperHalf .titleAndLevel .level").text("Lvl " + this.owned);
     }
 }
 /**
@@ -515,35 +519,30 @@ class Generator
  * @param {string} classes class attribute of div
  * @param {string} style style attribute of div
  * @param {object} data data attributes of div
- * @returns {object} JQuery object
+ * @returns {jQuery} JQuery object
  */
-function getJQDiv(id, classes = "", style = "", data = {})
-{
-    var div = $('<div id="'+id+'" class="'+classes+'" style="'+style+'"></div>');
-    if (data.length > 0)
-    {
+function getJQDiv(id, classes = "", style = "", data = {}) {
+    var div = $('<div id="' + id + '" class="' + classes + '" style="' + style + '"></div>');
+    if (data.length > 0) {
         for (const key in data) {
             if (data.hasOwnProperty.call(data, key)) {
                 const element = data[key];
-                div.attr("data-"+key, data[key]);
+                div.attr("data-" + key, data[key]);
             }
         }
     }
     return div;
 }
-function moneyFormat(money, nachkommastellen = 0)
-{
+function moneyFormat(money, nachkommastellen = 0) {
     var letter = 0;
-    while (money > 1000)
-    {
+    while (money > 1000) {
         letter += 1;
         money /= 1000;
     }
-    money = Intl.NumberFormat("de-DE", {style:"decimal", maximumFractionDigits: 3, minimumFractionDigits: 0}).format(money);
+    money = Intl.NumberFormat("de-DE", { style: "decimal", maximumFractionDigits: 3, minimumFractionDigits: 0 }).format(money);
     var returnString = money.toString();
     returnString += " ";
-    switch (letter)
-    {
+    switch (letter) {
         case 1:
             returnString += "K";
             break;
@@ -556,10 +555,10 @@ function moneyFormat(money, nachkommastellen = 0)
         case 4:
             returnString += "T";
             break;
-        case 5: 
+        case 5:
             returnString += "Qu";
             break;
-        case 5: 
+        case 5:
             returnString += "Qi";
             break;
     }

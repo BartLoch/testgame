@@ -1,61 +1,60 @@
-#mainWindow
-{
+#mainWindow {
     font-family: Arial;
     width: 1600px;
     height: 900px;
     margin: 0 auto;
     user-select: none;
-    background-color: lightgrey;
+    
     box-sizing: border-box;
     overflow: hidden;
 }
-#mainWindow #topBar
-{
+
+#mainWindow #topBar {
     position: absolute;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 80px;
     border-radius: 5px;
     box-sizing: border-box;
-    background-image: url(Window02.png);
-    background-size: 100% 80px;
-    background-repeat:no-repeat;
-    background-position: center center;
-    color: white;
-    font-weight:bold;
-}
-#mainWindow #leftBar
-{
+    
+    
+    
+    
+    color: black;
+    font-weight: bold;
+border: 2px solid black;}
+
+#mainWindow #leftBar {
     position: absolute;
-    top:80px;
+    top: 80px;
     left: 0;
     width: 300px;
     bottom: 0;
-    border: 1px solid blue;
+    border: 2px solid black;
     overflow: scroll;
 }
-#topBar .counterDiv
-{
+
+#topBar .counterDiv {
     height: 100%;
     padding: 20px;
     margin: 0 10px 0 5px;
     display: inline-block;
     font-size: 25px;
 }
-.counterDiv .label
-{
+
+.counterDiv .label {
     margin-right: 5px;
     text-align: right;
     display: inline-block;
 }
-.counterDiv .value
-{
+
+.counterDiv .value {
     text-align: left;
     display: inline-block;
 }
-#mainWindow #clickButton
-{
+
+#mainWindow #clickButton {
     background-image: url(Window03_Btn.png);
     background-size: contain;
     background-repeat: no-repeat;
@@ -74,173 +73,206 @@
     cursor: pointer;
     text-align: center;
 }
-#mainWindow #clickButton:hover
-{
+
+#mainWindow #clickButton:hover {
     width: 190px;
     height: 114px;
     top: calc(50% - 95px);
     left: calc(50% - 57px);
     font-size: 29.5px;
 }
-.generatorDiv
-{
+
+.generatorDiv {
     position: relative;
     height: 160px;
     box-sizing: border-box;
-    border: 1px solid blue;
+    border: 2px solid black;
     padding: 10px;
 }
-.generatorDiv .upperHalf
-{
+
+.generatorDiv .upperHalf {
     position: relative;
     height: 65px;
     width: 100%;
 }
-.generatorDiv .lowerHalf
-{
+
+.generatorDiv .lowerHalf {
     position: relative;
     height: 75px;
     width: 100%;
 }
-.generatorDiv .upperHalf .titleAndLevel
-{
+
+.generatorDiv .upperHalf .titleAndLevel {
     height: 30px;
     width: 100%;
     font-size: 18px;
     font-weight: bold;
 }
-.generatorDiv .upperHalf .titleAndLevel .title
-{
+
+.generatorDiv .upperHalf .titleAndLevel .title {
     display: inline-block;
     width: 70%;
     height: 100%;
 }
-.generatorDiv .upperHalf .titleAndLevel .level
-{
+
+.generatorDiv .upperHalf .titleAndLevel .level {
     display: inline-block;
     width: 30%;
     height: 100%;
 }
-.generatorDiv .upperHalf .progressBar
-{
+
+.generatorDiv .upperHalf .progressBar {
     position: relative;
     border: 2px solid black;
     border-radius: 4px;
     height: 30px;
     font-size: 18px;
 }
-.generatorDiv .upperHalf .progressBar .background
-{
+
+.generatorDiv .upperHalf .progressBar .background {
     width: 100%;
     height: 100%;
     background-color: lightblue;
     border-radius: 4px;
 }
-.generatorDiv .upperHalf .progressBar .label
-{
+
+.generatorDiv .upperHalf .progressBar .label {
     position: absolute;
-    left:0;
-    right:0;
+    left: 0;
+    right: 0;
     top: 4px;
     font-weight: bold;
     text-align: center;
 }
-.generatorDiv .upperHalf .progressBar .bar
-{
+
+.generatorDiv .upperHalf .progressBar .bar {
     position: absolute;
-    left:0;
-    right:100%;
+    left: 0;
+    right: 100%;
     top: 0;
     bottom: 0;
     background-color: #00bd00;
 }
-.generatorDiv .lowerHalf .money
-{
+
+.generatorDiv .lowerHalf .money {
     height: 30px;
 }
-.generatorDiv .lowerHalf .money *
-{
+
+.generatorDiv .lowerHalf .money * {
     display: inline-block;
     vertical-align: sub;
 }
-.generatorDiv .lowerHalf .upgradeBtnWrapper
-{
+
+.generatorDiv .lowerHalf .upgradeBtnWrapper {
     height: 40px;
     padding: 5px 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
-.generatorDiv .lowerHalf .upgradeBtnWrapper .button
-{
+
+.generatorDiv .lowerHalf .upgradeBtnWrapper .button {
     flex-grow: 1;
     border: 2px solid black;
     width: 90px;
     margin: 0 5px;
-    border-radius: 3px;
     text-align: center;
     padding: 4px;
     transition: 0.5s;
     background-size: 200% auto;
-    color: white;            
-    box-shadow: 0 0 20px #eee;
+    color: black;
+    
     border-radius: 10px;
     cursor: pointer;
-    background-image: linear-gradient(to right, #314755 0%, #26a0da  51%, #314755  100%)
-}
+    }
+
 .generatorDiv .lowerHalf .upgradeBtnWrapper .button:hover {
-    background-position: right center; /* change the direction of the change here */
+    background-position: right center;
+    /* change the direction of the change here */
     color: #fff;
     text-decoration: none;
-  }
-.generatorDiv .lowerHalf .upgradeBtnWrapper .button .stepsLabel
-{
+}
+
+.generatorDiv .lowerHalf .upgradeBtnWrapper .button .stepsLabel {
     height: 15px;
     font-weight: bold;
 }
-.generatorDiv .lowerHalf .upgradeBtnWrapper .button .upgradePrice
-{
+
+.generatorDiv .lowerHalf .upgradeBtnWrapper .button .upgradePrice {
     height: 10px;
     font-size: 0.8em;
-    color: gold;
+    color: black;
 }
 
-.btn-grad 
-{
-    background-image: linear-gradient(to right, #314755 0%, #26a0da  51%, #314755  100%)
-}
 .btn-grad {
-   margin: 10px;
-   padding: 15px 45px;
-   text-align: center;
-   text-transform: uppercase;
-   transition: 0.5s;
-   background-size: 200% auto;
-   color: white;            
-   box-shadow: 0 0 20px #eee;
-   border-radius: 10px;
-   display: block;
- }
-body .toastmessage
-{
+    background-image: linear-gradient(to right, #314755 0%, #26a0da 51%, #314755 100%)
+}
+
+.btn-grad {
+    margin: 10px;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    display: block;
+}
+
+body .toastmessage {
     width: 150px;
-    height: 20px;
     position: absolute;
     top: 50px;
     left: calc(50% - 75px);
     background-color: white;
     border-radius: 3px;
     z-index: 2;
+    padding: 10px;
 }
-#topBar #settingsBtn
-{
+
+#topBar #settingsBtn {
     position: absolute;
     right: 20px;
     top: 20px;
     width: 30px;
     height: 30px;
-    border: 1px solid white;
+    border: 2px solid black;
     border-radius: 6px;
-    background-image: url(settings.png);
+    background-image: url(settings_black.png);
     background-size: 24px;
-background-position: center center;background-repeat: no-repeat;cursor: pointer;}
+    background-position: center center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+#settingsWindow {
+    display: none;
+    position: absolute;
+    top: 80px;
+    right: 0;
+    width: 250px;
+    border: 2px solid black;
+    border-radius: 3px;
+    padding: 10px;
+    background-color: white;
+    font-weight: bold;
+}
+
+#settingsWindow .settingsRow * {
+    display: inline-block;
+}
+
+#settingsWindow .settingsRow .content {
+
+    width: 120px;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+#settingsWindow .settingsRow .label {
+
+    width: 120px;
+    box-sizing: border-box;
+}
