@@ -38,6 +38,7 @@ class game {
                 this.settings = save.settings;
             else
                 this.settings = this.initiateSettings();
+            this.save(false);
         }
         this.tps = 25;
         this.fillVersion();
