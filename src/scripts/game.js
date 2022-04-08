@@ -149,7 +149,8 @@ class game {
     checkVersion()
     {
         var self = this;
-        $.get("https://bartloch.github.io/testgame/src/version.txt", function(response){
+        var now = new Date();
+        $.get("https://bartloch.github.io/testgame/src/version.txt?nocache="+now.getTime(), function(response){
             if (self.version < response)
                 showToast("A new version is out, please refresh the page, to get the latest bugfixes and features.");
         });
