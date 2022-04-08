@@ -232,3 +232,15 @@ body .toastmessage
     border-radius: 3px;
     z-index: 2;
 }
+#topBar #settingsBtn
+{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid white;
+    border-radius: 6px;
+    background-image: url(settings.png);
+    background-size: 24px;
+background-position: center center;background-repeat: no-repeat;cursor: pointer;}

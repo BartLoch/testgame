@@ -14,6 +14,7 @@ class game {
     runTimer;
     saveTimer;
     tps; //ticks per seonds
+    version;
     constructor()
     {
         this.money = 10000;
@@ -36,8 +37,32 @@ class game {
             var save = JSON.parse(localStorage.save);
             this.generators = this.loadGeneratorSave(save.generators);
             this.money = save.money;
+            if (save.hasOwnProperty("settings"))
+                this.settings = save.settings;
+            else
+                this.settings = this.initiateSettings();
         }
         this.tps = 25;
+        this.fillVersion();
+    }
+    fillVersion()
+    {
+        var self = this;
+        jQuery.get('version.txt', function(data) {
+            self.version = data;
+        });        
+    }
+    initiateSettings()
+    {
+        var settings = {};
+        settings.darkmode = false;
+        return settings;
+    }
+    addSettingsView()
+    {
+        var settings = this.settings;
+        var settingsBtn = getJQDiv("settingsBtn");
+        $("#topBar").append(settingsBtn);
     }
     loadGeneratorSave(generators)
     {
@@ -85,6 +110,7 @@ class game {
         topbar.append(getCounterDiv("money", "Geld:", this.money));
         this.buildGenerators(this.generators);
         this.addGameEventListeners();
+        this.addSettingsView();
     }
     updateUI()
     {
@@ -118,6 +144,15 @@ class game {
         };
         localStorage.save = JSON.stringify(save);
         showToast("Saved automatically");
+        this.checkVersion();
+    }
+    checkVersion()
+    {
+        var self = this;
+        $.get("https://bartloch.github.io/testgame/src/version.txt", function(response){
+            if (self.version < response)
+                showToast("A new version is out, please refresh the page, to get the latest bugfixes and features.");
+        });
     }
     generatorsProduce()
     {
