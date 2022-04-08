@@ -1,10 +1,10 @@
 var game1;
 $(document).ready(function () {
-    game1 = new game();
+    game1 = new Game();
     game1.start();
 });
 var holdClick;
-class game {
+class Game {
     money;
     clickStrength;
     upgrades;
@@ -22,13 +22,13 @@ class game {
             "hasHoldClick": true
         };
         this.generators = {
-            0: new Generator(this, "news", "Newsstand", 1, 1, 0.6, 1.07, 0.6, 4, 0),
-            1: new Generator(this, "shoe", "Shoe Seller", 60, 0, 3, 1.15, 3, 60, 0),
-            2: new Generator(this, "mower", "Lawn Mower Seller", 540, 0, 6, 1.14, 6, 720, 0),
-            3: new Generator(this, "car", "Car Seller", 4320, 0, 12, 1.13, 12, 8640, 0),
-            4: new Generator(this, "landlord", "Landlord", 51840, 0, 24, 1.12, 24, 103680, 0),
-            5: new Generator(this, "estate", "Estate Seller", 622080, 0, 96, 1.11, 96, 1244160, 0),
-            6: new Generator(this, "bank", "Bank", 7464960, 0, 384, 1.1, 384, 14929920, 0)
+            0: new Generator("news", "Newsstand", 1, 1, 0.6, 1.07, 0.6, 4, 0),
+            1: new Generator("shoe", "Shoe Seller", 60, 0, 3, 1.15, 3, 60, 0),
+            2: new Generator("mower", "Lawn Mower Seller", 540, 0, 6, 1.14, 6, 720, 0),
+            3: new Generator("car", "Car Seller", 4320, 0, 12, 1.13, 12, 8640, 0),
+            4: new Generator("landlord", "Landlord", 51840, 0, 24, 1.12, 24, 103680, 0),
+            5: new Generator("estate", "Estate Seller", 622080, 0, 96, 1.11, 96, 1244160, 0),
+            6: new Generator("bank", "Bank", 7464960, 0, 384, 1.1, 384, 14929920, 0)
         };
         if (localStorage.hasOwnProperty("save")) {
             var save = JSON.parse(localStorage.save);
@@ -72,7 +72,7 @@ class game {
     loadSettingsListener() {
         var self = this;
         $("#darkmodeSwitch").on("change", function () {
-            if ($(this).prop("checked") == true) {
+            if ($(this).prop("checked")) {
                 self.enableDarkmode();
                 self.saveSetting("darkmode", true);
             }
@@ -95,24 +95,24 @@ class game {
     loadGeneratorSave(generators) {
         if (generators.hasOwnProperty("news")) {
             return {
-                0: new Generator(this, "news", "Newsstand", 1, generators["news"].owned, 0.6, 1.07, 0.6, 4, 0),
-                1: new Generator(this, "shoe", "Shoe Seller", 60, generators["shoe"].owned, 3, 1.15, 3, 60, 0),
-                2: new Generator(this, "mower", "Lawn Mower Seller", 540, generators["mower"].owned, 6, 1.14, 6, 720, 0),
-                3: new Generator(this, "car", "Car Seller", 4320, generators["car"].owned, 12, 1.13, 12, 8640, 0),
-                4: new Generator(this, "landlord", "Landlord", 51840, generators["landlord"].owned, 24, 1.12, 24, 103680, 0),
-                5: new Generator(this, "estate", "Estate Seller", 622080, generators["estate"].owned, 96, 1.11, 96, 1244160, 0),
-                6: new Generator(this, "bank", "Bank", 7464960, generators["bank"].owned, 384, 1.1, 384, 14929920, 0)
+                0: new Generator("news", "Newsstand", 1, generators["news"].owned, 0.6, 1.07, 0.6, 4, 0),
+                1: new Generator("shoe", "Shoe Seller", 60, generators["shoe"].owned, 3, 1.15, 3, 60, 0),
+                2: new Generator("mower", "Lawn Mower Seller", 540, generators["mower"].owned, 6, 1.14, 6, 720, 0),
+                3: new Generator("car", "Car Seller", 4320, generators["car"].owned, 12, 1.13, 12, 8640, 0),
+                4: new Generator("landlord", "Landlord", 51840, generators["landlord"].owned, 24, 1.12, 24, 103680, 0),
+                5: new Generator("estate", "Estate Seller", 622080, generators["estate"].owned, 96, 1.11, 96, 1244160, 0),
+                6: new Generator("bank", "Bank", 7464960, generators["bank"].owned, 384, 1.1, 384, 14929920, 0)
             };
         }
         else {
             return {
-                0: new Generator(this, "news", "Newsstand", 1, generators[0].owned, 0.6, 1.07, 0.6, 4, 0),
-                1: new Generator(this, "shoe", "Shoe Seller", 60, generators[1].owned, 3, 1.15, 3, 60, 0),
-                2: new Generator(this, "mower", "Lawn Mower Seller", 540, generators[2].owned, 6, 1.14, 6, 720, 0),
-                3: new Generator(this, "car", "Car Seller", 4320, generators[3].owned, 12, 1.13, 12, 8640, 0),
-                4: new Generator(this, "landlord", "Landlord", 51840, generators[4].owned, 24, 1.12, 24, 103680, 0),
-                5: new Generator(this, "estate", "Estate Seller", 622080, generators[5].owned, 96, 1.11, 96, 1244160, 0),
-                6: new Generator(this, "bank", "Bank", 7464960, generators[6].owned, 384, 1.1, 384, 14929920, 0)
+                0: new Generator("news", "Newsstand", 1, generators[0].owned, 0.6, 1.07, 0.6, 4, 0),
+                1: new Generator("shoe", "Shoe Seller", 60, generators[1].owned, 3, 1.15, 3, 60, 0),
+                2: new Generator("mower", "Lawn Mower Seller", 540, generators[2].owned, 6, 1.14, 6, 720, 0),
+                3: new Generator("car", "Car Seller", 4320, generators[3].owned, 12, 1.13, 12, 8640, 0),
+                4: new Generator("landlord", "Landlord", 51840, generators[4].owned, 24, 1.12, 24, 103680, 0),
+                5: new Generator("estate", "Estate Seller", 622080, generators[5].owned, 96, 1.11, 96, 1244160, 0),
+                6: new Generator("bank", "Bank", 7464960, generators[6].owned, 384, 1.1, 384, 14929920, 0)
             };
         }
 
@@ -128,7 +128,6 @@ class game {
     buildUI() {
         console.log(this.generators);
         var topbar = $("#topBar");
-        var leftBar = $("#leftBar");
         topbar.append(getCounterDiv("money", "Geld:", this.money));
         this.buildGenerators(this.generators);
         this.addGameEventListeners();
@@ -191,7 +190,7 @@ class game {
             var hidden = false;
             if (key > 0 && (generators[key - 1].owned == 0))
                 hidden = true;
-            leftBar.append(getGeneratorDiv(key, generators[key], hidden));
+            leftBar.append(getGeneratorDiv(generators[key], hidden));
         }
     }
     addGameEventListeners() {
@@ -250,32 +249,23 @@ function getCounterDiv(id, label, value) {
     return $('<div id="' + id + '" class="counterDiv"><div class="label">' + label + '</div><div class="value">' + value + '</div></div>');
 }
 function getGeneratorIndexById(id) {
-    var result = -1;
     switch (id) {
         case "news":
             return 0;
-            break;
         case "shoe":
             return 1;
-            break;
         case "mower":
             return 2;
-            break;
         case "car":
             return 3;
-            break;
         case "landlord":
             return 4;
-            break;
         case "estate":
             return 5;
-            break;
         case "bank":
             return 6;
-            break;
         default:
             return -1;
-            break;
     }
 }
 /**
@@ -284,7 +274,7 @@ function getGeneratorIndexById(id) {
  * @param {Generator} generator Generator object
  * @returns {object} jQuery object of Generator
  */
-function getGeneratorDiv(id, generator, hidden) {
+function getGeneratorDiv(generator, hidden) {
     var generatorD = getJQDiv(generator.id, "generatorDiv");
     var upperPart = getUpperGeneratorDiv(generator);
     var lowerPart = getLowerGeneratorDiv(generator);
@@ -345,7 +335,6 @@ function getUpgradeButton(generator, steps) {
     lowerHalf.text(moneyFormat(generator.getBuildCost(steps)));
     button.append(upperHalf);
     button.append(lowerHalf);
-    var revenue = generator.baseRevenue * (generator.owned + steps);
     var self = generator;
     button.click(function () {
         if (self.canBeBuilt(steps)) {
@@ -415,7 +404,6 @@ class Generator {
     currentProgress;
     /**
      * Create a Worker
-     * @param {game} game object of instance game
      * @param {string} id id of benerator (also of html div)
      * @param {string} name name of Generator
      * @param {number} baseRevenue base revenue without multiplier
@@ -426,7 +414,7 @@ class Generator {
      * @param {number} baseCost base cost for first level of Generator
      * @param {number} currentProgress current progress in percent
      */
-    constructor(game, id, name, baseRevenue, owned, baseProductionTime, costfactor, productionTime, baseCost, currentProgress) {
+    constructor(id, name, baseRevenue, owned, baseProductionTime, costfactor, productionTime, baseCost, currentProgress) {
         this.name = name;
         this.id = id;
         this.baseRevenue = baseRevenue;
@@ -462,9 +450,7 @@ class Generator {
      * @returns {boolean} if Generators can be bought
      */
     canBeBuilt(quantity) {
-        if (this.getBuildCost(quantity) <= game1.money)
-            return true;
-        return false;
+        return this.getBuildCost(quantity) <= game1.money;
     }
     /**
      * Get building cost to buy certain amount of Generators
@@ -482,7 +468,7 @@ class Generator {
         let revenue = this.baseRevenue * this.owned;
         let str = "+";
         str += moneyFormat(revenue);
-        str += " (" + moneyFormat(revenue / this.productionTime, 2) + "/s)";
+        str += " (" + moneyFormat(revenue / this.productionTime) + "/s)";
         return str;
     }
     updateGenratorDiv() {
@@ -527,14 +513,13 @@ function getJQDiv(id, classes = "", style = "", data = {}) {
     if (data.length > 0) {
         for (const key in data) {
             if (data.hasOwnProperty.call(data, key)) {
-                const element = data[key];
                 div.attr("data-" + key, data[key]);
             }
         }
     }
     return div;
 }
-function moneyFormat(money, nachkommastellen = 0) {
+function moneyFormat(money) {
     var letter = 0;
     while (money > 1000) {
         letter += 1;
